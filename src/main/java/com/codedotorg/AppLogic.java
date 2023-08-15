@@ -30,7 +30,7 @@ public class AppLogic {
             User currentUser = usersList.get(index);
 
             if (currentUser.getName().equals(username)) {
-                foundUser = createNewUser(username);
+                foundUser = currentUser;
             }
         }
 
@@ -55,13 +55,13 @@ public class AppLogic {
      * @return true if the username is found in the list, false otherwise
      */
     public boolean isUsernameExists(ArrayList<User> usersList, String username) {
-        boolean found = true;
+        boolean found = false;
 
         for (int index = 0; index < usersList.size(); index++) {
             User currentUser = usersList.get(index);
 
             if (currentUser.getName().equals(username)) {
-                found = false;
+                found = true;
             }
         }
 
