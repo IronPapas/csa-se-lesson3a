@@ -2,77 +2,102 @@ package com.codedotorg.app;
 
 import java.util.ArrayList;
 
+import com.codedotorg.AppLogic;
 import com.codedotorg.User;
 
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class WelcomeScreen {
+public class WelcomeScreen extends AppScreen {
 
-    private VBox layout;
-    private Label nameLabel;
+    /** The text field for the user to enter their name */
     private TextField nameInput;
-    private Button submitButton;
-    private Scene scene;
 
-    public WelcomeScreen() {
-        layout = new VBox(10);
-        nameLabel = new Label("Welcome! What's your name?");
+    /**
+     * Constructs a WelcomeScreen object with the specified window, width, and height.
+     * Initializes a TextField for user input.
+     *
+     * @param window the Stage object to display the WelcomeScreen on
+     * @param width the width of the WelcomeScreen
+     * @param height the height of the WelcomeScreen
+     */
+    public WelcomeScreen(Stage window, int width, int height) {
+        super(window, width, height);
+
         nameInput = new TextField();
-        submitButton = new Button("Submit");
     }
     
-    public void showWelcomeScreen(Stage window) {
-        layout = new VBox(10);
-        layout.setPadding(new Insets(10, 10, 10, 10));
-
-        setButtonAction(window);
-        layout.getChildren().addAll(nameLabel, nameInput, submitButton);
-        
-        setAndShowScene(window);
+    /**
+     * Displays the welcome screen by creating a VBox layout and setting it as the scene.
+     */
+    public void showScene() {
+        VBox welcomeLayout = createWelcomeScreen();
+        setAndShowScene(welcomeLayout);
     }
 
-    private void setButtonAction(Stage window) {
+    /**
+     * Creates a VBox layout for the welcome screen.
+     * 
+     * @return the VBox layout for the welcome screen
+     */
+    public VBox createWelcomeScreen() {
+        VBox tempLayout = new VBox(10);
+        tempLayout.setPadding(new Insets(10, 10, 10, 10));
+
+        Label nameLabel = new Label("Welcome! What's your name?");
+
+        tempLayout.getChildren().addAll(nameLabel, nameInput, createSubmitButton());
+
+        return tempLayout;
+    }
+
+    /**
+     * Creates a submit button that, when clicked, sets or switches the user
+     * to the name entered in the name input field, shows the main screen,
+     * and clears the name input field.
+     *
+     * @return the submit button
+     */
+    public Button createSubmitButton() {
+        Button submitButton = new Button("Submit");
+
         submitButton.setOnAction(e -> {
             if (!nameInput.getText().isEmpty()) {
                 String username = nameInput.getText();
                 setOrSwitchUser(username);
-                MovieApp.getMainScreen().showMainScreen(window);
+                MovieApp.getMainScreen().showScene();
                 nameInput.clear();
             }
         });
+
+        return submitButton;
     }
 
-    private void setAndShowScene(Stage window) {
-        scene = new Scene(layout, 500, 500);
-        window.setScene(scene);
-        window.show();
-    }
-
-    private void setOrSwitchUser(String username) {
-        boolean found = false;
+    /**
+     * Sets or switches the current user to the given username.
+     * If the username already exists in the list of users, sets the current user to that user.
+     * Otherwise, creates a new user with the given username and adds it to the list of users.
+     * 
+     * @param username the username of the user to set or switch to
+     */
+    public void setOrSwitchUser(String username) {
+        AppLogic logic = new AppLogic();
         ArrayList<User> usersList = MovieApp.getUsers();
+        User currentUser = null;
 
-        for (int index = 0; index < usersList.size(); index++) {
-            User currentUser = usersList.get(index);
-
-            if (currentUser.getName().equals(username)) {
-                MovieApp.setCurrentUser(currentUser);
-                System.out.println("username found");
-                found = true;
-            }
+        if (logic.isUsernameExists(usersList, username)) {
+            currentUser = logic.getExistingUser(usersList, username);
+        }
+        else {
+            currentUser = logic.createNewUser(username);
+            MovieApp.addUser(currentUser);
         }
 
-        if (!found) {
-            User user = new User(username);
-            MovieApp.addUser(user);
-            MovieApp.setCurrentUser(user);
-        }
+        MovieApp.setCurrentUser(currentUser);
     }
 
 }

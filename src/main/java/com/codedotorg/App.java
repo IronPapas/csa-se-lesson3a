@@ -11,8 +11,8 @@ public class App extends Application {
     }
 
     public void start(Stage primaryStage) {
-        MovieApp movies = new MovieApp();
-        movies.startApp(primaryStage);
+        MovieApp movies = new MovieApp(primaryStage, 500, 500);
+        movies.startApp();
     }
 
 }

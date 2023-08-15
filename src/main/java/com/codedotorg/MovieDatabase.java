@@ -9,6 +9,11 @@ import java.util.ArrayList;
 
 public class MovieDatabase {
     
+    /**
+     * Retrieves data from the Movie Database API for currently playing movies.
+     * 
+     * @return JSONArray containing the results of the API request
+     */
     public static JSONArray retrieveData() {
         OkHttpClient client = new OkHttpClient();
 
@@ -32,6 +37,12 @@ public class MovieDatabase {
         return null;
     }
 
+    /**
+     * This method retrieves data from a JSON array and creates an ArrayList of Movie objects.
+     * It filters the movies by original language (English) and extracts the title and release year.
+     * 
+     * @return ArrayList of Movie objects
+     */
     public static ArrayList<Movie> createMovieList() {
         JSONArray movieResults = retrieveData();
         ArrayList<Movie> tempMovieList = new ArrayList<Movie>();
